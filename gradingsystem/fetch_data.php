@@ -2,8 +2,8 @@
 // Include database connection file
 include('conn.php');
 
-// SQL query to fetch data from the students table for the specified sections
-$sql = "SELECT * FROM students WHERE section IN ('section1', 'section2', 'section3', 'section4', 'section5', 'section6', 'section7')";
+// SQL query to fetch data from the students table
+$sql = "SELECT * FROM students";
 $result = $conn->query($sql);
 
 $students = [];

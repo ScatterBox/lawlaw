@@ -98,7 +98,7 @@ if ($_SESSION['role'] !== 'admin') {
 
 
 
-//Admins
+        //Admins
         function showAdmin() {
             var mainContent = document.getElementById('mainContent');
             mainContent.innerHTML = `
@@ -163,7 +163,7 @@ if ($_SESSION['role'] !== 'admin') {
             };
             xhr.send();
         }
-        
+
         function showNewAdmin() {
             var mainContent = document.getElementById('mainContent');
             mainContent.innerHTML = ` <?php include 'conn.php'; ?> 
@@ -308,7 +308,7 @@ if ($_SESSION['role'] !== 'admin') {
 
 
 
-//Student
+        //Student
         function showManageClass() {
             var mainContent = document.getElementById('mainContent');
             mainContent.innerHTML = `
@@ -354,7 +354,7 @@ if ($_SESSION['role'] !== 'admin') {
             xhr.send();
 
             xhr.onload = function () {
-                if (this.status == 200) {
+                if (this.status === 200) {
                     // Parse the JSON data
                     var students = JSON.parse(this.responseText);
 
@@ -366,17 +366,17 @@ if ($_SESSION['role'] !== 'admin') {
                         var tr = document.createElement('tr');
                         var fullname = students[i].fullname;
                         tr.innerHTML = `
-            <th scope="row">${i + 1}</th>
-            <td>${fullname}</td>
-            <td>${students[i].age}</td>
-            <td>${students[i].gender}</td>
-            <td>${students[i].birthdate}</td>
-            <td>${students[i].address}</td>
-            <td>${students[i].year_level}</td>
-            <td>${students[i].section}</td>
-            <td>${students[i].email}</td>
-            <td>${students[i].lrn}</td>
-        `;
+                    <th scope="row">${i + 1}</th>
+                    <td>${fullname}</td>
+                    <td>${students[i].age}</td>
+                    <td>${students[i].gender}</td>
+                    <td>${students[i].birthdate}</td>
+                    <td>${students[i].address}</td>
+                    <td>${students[i].year_level}</td>
+                    <td>${students[i].section}</td>
+                    <td>${students[i].email}</td>
+                    <td>${students[i].lrn}</td>
+                `;
                         tbody.appendChild(tr);
                     }
 
@@ -576,7 +576,7 @@ if ($_SESSION['role'] !== 'admin') {
             });
         }
 
-//Teacher
+        //Teacher
         function showFaculty() {
             var mainContent = document.getElementById('mainContent');
             mainContent.innerHTML = `
