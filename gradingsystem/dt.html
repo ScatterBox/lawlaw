@@ -1,0 +1,76 @@
+<?php
+include 'conn.php'; // Include your database connection file
+
+$sql = "SELECT CONCAT(fname, ' ', mname, ' ', lname, ' ', ename) AS Name, 
+               CASE 
+                   WHEN year_level = 9 THEN 'Grade 9' 
+                   WHEN year_level = 10 THEN 'Grade 10' 
+               END AS 'Year Level', 
+               CONCAT('Section ', section) AS Section, 
+               age, 
+               address, 
+               gender, 
+               'Teacher' AS Role 
+        FROM teachers"; // Fetch data from the 'teachers' table
+$result = $conn->query($sql);
+
+$data = array();
+while($row = $result->fetch_assoc()) {
+    $data[] = $row;
+}
+
+// Output to JSON format
+header('Content-Type: application/json');
+echo json_encode($data);
+
+$conn->close();
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.css">
+    <link rel="stylesheet" href="style.css">
+
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script defer src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+    <script defer src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.js"></script>
+    <script defer src="script.js"></script>
+
+
+</head>
+<body>
+    <table id="example" class="table table-striped" style="width:100%">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Year Level</th>
+                <th>Section</th>
+                <th>Age</th>
+                <th>Address</th>
+                <th>Gender</th>
+                <th>Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>Name</th>
+                <th>Year Level</th>
+                <th>Section</th>
+                <th>Age</th>
+                <th>Address</th>
+                <th>Gender</th>
+                <th>Role</th>
+            </tr>
+        </tfoot>
+    </table> 
+</body>
+</html>

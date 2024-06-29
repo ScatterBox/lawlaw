@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <style>
+    header {
+        display: flex;
+        align-items: center;
+        margin-right: 10px;
+
+    }
+    .container {
+        display: flex;
+    }
+    img {
+        width: 50px;
+        height: 50px;
+    }
+    .sidebar {
+        border: 2px solid black;
+    }
+    #mainContent {
+        flex-grow: 1; /* This will make the main content take up the remaining space */
+    }
+</style>
+
+
+</head>
+<body>
+    <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">
+            <img src="logo.jpg" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
+            Florentino Galang Sr National High School
+          </a>
+        </div>
+      </nav>
+<div class="container">
+    <div class="sidebar">
+        <ul class="sidebar-links">
+            <li>
+                <a href="#" onclick="showFaculty()">
+                    <span class="material-symbols-outlined"> Person </span>Teachers</a>
+            </li>
+            <li>
+                <a href="#" onclick="showAdmin()">
+                    <span class="material-symbols-outlined"> Person </span>Admin</a>
+            </li>
+            <li>
+                <a href="#" onclick="showManageClass()">
+                    <span class="material-symbols-outlined">
+                        Person
+                    </span>
+                    Students</a>
+            </li>
+
+            <h4>
+                <span>Manage Info</span>
+                <div class="menu-separator"></div>
+            </h4>
+            <li>
+                <a href="#" onclick="showNewAdmin()">
+                    <span class="material-symbols-outlined">
+                        person_add
+                    </span>Add Admin</a>
+            </li>
+            <li>
+                <a href="#" onclick="showNewTeacher()">
+                    <span class="material-symbols-outlined">
+                        person_add
+                    </span>Add Teacher</a>
+            </li>
+            <li>
+                <a href="#" onclick="showAddUser()">
+                    <span class="material-symbols-outlined">
+                        person_add
+                    </span>Add User</a>
+            </li>
+
+            <h4>
+                <span>Account</span>
+                <div class="menu-separator"></div>
+            </h4>
+            <li>
+                <a href="logout.php"><span class="material-symbols-outlined"> logout </span>Logout</a>
+            </li>
+        </ul>
+
+    </div>
+    <div id="mainContent"></div>
+       
+</div>
+
+
+
+    
+</body>
+</html>
