@@ -310,8 +310,8 @@ if ($_SESSION['role'] !== 'admin') {
 
         //Student
         function showManageClass() {
-            var mainContent = document.getElementById('mainContent');
-            mainContent.innerHTML = `
+    var mainContent = document.getElementById('mainContent');
+    mainContent.innerHTML = `
     <style>
         h1 {
             margin-top: 20px;
@@ -338,6 +338,7 @@ if ($_SESSION['role'] !== 'admin') {
                 <th scope="col">Address</th>
                 <th scope="col">Year Level</th>
                 <th scope="col">Section</th>
+                <th scope="col">Subjects</th>
                 <th scope="col">Email</th>
                 <th scope="col">LRN</th>
             </tr>
@@ -347,25 +348,25 @@ if ($_SESSION['role'] !== 'admin') {
     </table>
     `;
 
-            // Fetch the student data from the server using AJAX
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'fetch_data.php', true);
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.send();
+    // Fetch the student data from the server using AJAX
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'fetch_data.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.send();
 
-            xhr.onload = function () {
-                if (this.status === 200) {
-                    // Parse the JSON data
-                    var students = JSON.parse(this.responseText);
+    xhr.onload = function () {
+        if (this.status === 200) {
+            // Parse the JSON data
+            var students = JSON.parse(this.responseText);
 
-                    // Get the table body
-                    var tbody = document.querySelector('#studentTable tbody');
+            // Get the table body
+            var tbody = document.querySelector('#studentTable tbody');
 
-                    // Insert the student data into the table
-                    for (var i = 0; i < students.length; i++) {
-                        var tr = document.createElement('tr');
-                        var fullname = students[i].fullname;
-                        tr.innerHTML = `
+            // Insert the student data into the table
+            for (var i = 0; i < students.length; i++) {
+                var tr = document.createElement('tr');
+                var fullname = students[i].fullname;
+                tr.innerHTML = `
                     <th scope="row">${i + 1}</th>
                     <td>${fullname}</td>
                     <td>${students[i].age}</td>
@@ -374,17 +375,19 @@ if ($_SESSION['role'] !== 'admin') {
                     <td>${students[i].address}</td>
                     <td>${students[i].year_level}</td>
                     <td>${students[i].section}</td>
+                    <td>${students[i].subjects || 'No subjects'}</td>
                     <td>${students[i].email}</td>
                     <td>${students[i].lrn}</td>
                 `;
-                        tbody.appendChild(tr);
-                    }
+                tbody.appendChild(tr);
+            }
 
-                    // Initialize DataTable
-                    $('#studentTable').DataTable();
-                }
-            };
+            // Initialize DataTable
+            $('#studentTable').DataTable();
         }
+    };
+}
+
 
         function showAddUser() {
             var mainContent = document.getElementById('mainContent');

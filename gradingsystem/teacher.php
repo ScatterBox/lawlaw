@@ -7,7 +7,7 @@ if ($_SESSION['role'] !== 'teacher') {
 
 function getNewClassFormHtml()
 {
-    $created_by = $_SESSION['user_id'];
+    $created_by = $_SESSION['user']['fname'] . ' ' . $_SESSION['user']['mname'] . ' ' . $_SESSION['user']['lname'] . ' ' . $_SESSION['user']['ename']; // Fetch the full name from the session data
 
     // Fetch distinct year levels and sections from the database
     $conn = new mysqli('localhost', 'root', '', 'gradingsystem');
@@ -112,7 +112,7 @@ $newClassFormHtml = getNewClassFormHtml();
     <div class="container-fluid">
         <aside class="sidebar">
             <div class="sidebar-header">
-                <img src="logo.jpg" alt="logo" />
+                <img src="images/logo.jpg" alt="logo" />
                 <div class="header-text">
                     <h2>Teacher</h2>
                     <h2>Dashboard</h2>
@@ -168,102 +168,77 @@ $newClassFormHtml = getNewClassFormHtml();
         var newClassFormHtml = <?php echo json_encode($newClassFormHtml); ?>;
 
         function confirmLogout() {
-            var r = confirm("Are you sure you want to logout?");
-            if (r == true) {
-                // User confirmed they want to logout
-                return true;
-            } else {
-                // User cancelled the logout operation
-                return false;
-            }
+            return confirm("Are you sure you want to logout?");
         }
 
-        function showAddOptions() {
-            // Implement logic to display options (e.g., a dropdown menu)
-            // You can use CSS to show/hide the relevant elements.
-            console.log("Showing add options: Add Student, Teacher, Admin");
-            // Add your specific logic here...
-        }
-        function logout() {
-            // Your logout logic here (e.g., redirect to logout page)
-            window.location.href = "logout.php";
-        }
+        function showManageClass() {
+            var mainContent = document.getElementById('mainContent');
+            mainContent.innerHTML = `
+    <style>
+        h1 { margin-top: 20px; }
+        .smaller-table { font-size: 0.8em; width: 80%; margin: auto; }
+        .smaller-table th, .smaller-table td { padding: 5px; }
+        .add-class-btn { margin: 20px auto; display: flex; justify-content: center; }
+    </style>
+        <h1 style="text-align: center;">List of Students</h1>
+        <div class="add-class-btn">
+            <button id="addClassBtn" class="btn btn-primary">Add Class</button>
+        </div>
+        <table id="studentTable" class="table table-striped smaller-table" style="width:100%">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Full Name</th>
+                    <th scope="col">Age</th>
+                    <th scope="col">Gender</th>
+                    <th scope="col">Birthdate</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Year Level</th>
+                    <th scope="col">Section</th>
+                    <th scope="col">Subject</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">LRN</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    `;
 
-        // Function to fetch and display student data
-    function showManageClass() {
-        var mainContent = document.getElementById('mainContent');
-        mainContent.innerHTML = `
-            <style>
-                h1 { margin-top: 20px; }
-                .smaller-table { font-size: 0.8em; width: 80%; margin: auto; }
-                .smaller-table th, .smaller-table td { padding: 5px; }
-                .add-class-btn { margin: 20px auto; display: flex; justify-content: center; }
-            </style>
-            <h1 style="text-align: center;">List of Students</h1>
-            <div class="add-class-btn">
-                <button id="addClassBtn" class="btn btn-primary">Add Class</button>
-            </div>
-            <table id="studentTable" class="table table-striped smaller-table" style="width:100%">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Full Name</th>
-                        <th scope="col">Age</th>
-                        <th scope="col">Gender</th>
-                        <th scope="col">Birthdate</th>
-                        <th scope="col">Address</th>
-                        <th scope="col">Year Level</th>
-                        <th scope="col">Section</th>
-                        <th scope="col">Subject</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">LRN</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        `;
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'fetch_dteach.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.send();
 
-        // Fetch the student data from the server using AJAX
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'fetch_dteach.php', true);
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        xhr.send();
+            xhr.onload = function () {
+                if (this.status == 200) {
+                    var students = JSON.parse(this.responseText);
+                    var tbody = document.querySelector('#studentTable tbody');
 
-        xhr.onload = function () {
-            if (this.status == 200) {
-                var students = JSON.parse(this.responseText);
-                var tbody = document.querySelector('#studentTable tbody');
+                    for (var i = 0; i < students.length; i++) {
+                        var tr = document.createElement('tr');
+                        var fullname = `${students[i].fname} ${students[i].mname} ${students[i].lname}`;
+                        tr.innerHTML = `
+                    <th scope="row">${i + 1}</th>
+                    <td>${fullname}</td>
+                    <td>${students[i].age}</td>
+                    <td>${students[i].gender}</td>
+                    <td>${students[i].birthdate}</td>
+                    <td>${students[i].address}</td>
+                    <td>${students[i].year_level}</td>
+                    <td>${students[i].section}</td>
+                    <td>${students[i].subjects || 'No subjects'}</td>
+                    <td>${students[i].email}</td>
+                    <td>${students[i].lrn}</td>
+                `;
+                        tbody.appendChild(tr);
+                    }
 
-                for (var i = 0; i < students.length; i++) {
-                    var tr = document.createElement('tr');
-                    var fullname = `${students[i].fname} ${students[i].mname} ${students[i].lname}`;
-                    tr.innerHTML = `
-                        <th scope="row">${i + 1}</th>
-                        <td>${fullname}</td>
-                        <td>${students[i].age}</td>
-                        <td>${students[i].gender}</td>
-                        <td>${students[i].birthdate}</td>
-                        <td>${students[i].address}</td>
-                        <td>${students[i].year_level}</td>
-                        <td>${students[i].section}</td>
-                        <td>${students[i].subject_name || 'No subject'}</td>
-                        <td>${students[i].email}</td>
-                        <td>${students[i].lrn}</td>
-                    `;
-                    tbody.appendChild(tr);
+                    $('#studentTable').DataTable();
                 }
+            };
 
-                $('#studentTable').DataTable();
-            }
-        };
-
-        document.getElementById('addClassBtn').addEventListener('click', showNewClass);
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        showManageClass();
-    });
-
+            document.getElementById('addClassBtn').addEventListener('click', showNewClass);
+        }
         function showNewClass() {
             var mainContent = document.getElementById('mainContent');
             mainContent.innerHTML = newClassFormHtml;

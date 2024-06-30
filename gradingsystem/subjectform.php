@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $subject_name = $_POST["subject_name"];
     $year_level = $_POST["year_level"];
     $section = $_POST["section"];
-    $created_by = $_SESSION["user_id"]; // Assuming user_id is stored in session (teacher's ID)
+    $created_by = $_SESSION["user"]["user_id"]; // Assuming user_id is stored in session
 
     // Check if the same subject exists in the same year and section
     $checkSql = "SELECT * FROM subjects WHERE subject_name = ? AND year_level = ? AND section = ?";
@@ -36,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Insert the subject into the subjects table
     $sql = "INSERT INTO subjects (subject_name, year_level, section, created_by) VALUES (?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssi", $subject_name, $year_level, $section, $created_by);
+    $stmt->bind_param("ssss", $subject_name, $year_level, $section, $created_by);
 
     if ($stmt->execute()) {
         $subject_id = $stmt->insert_id;
