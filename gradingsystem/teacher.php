@@ -148,7 +148,7 @@ $newClassFormHtml = getNewClassFormHtml();
             </ul>
             <div class="user-account">
                 <div class="user-profile">
-                    <img src="<?php echo $_SESSION['user']['img']; ?>" alt="Profile Image" />
+                <img src="<?php echo './images/' . $_SESSION['user']['img']; ?>" alt="Profile Image" />
                     <div class="user-detail">
                         <h3><?php echo $_SESSION['user']['nickname']; ?></h3>
                         <span><?php echo ucfirst($_SESSION['user']['role']); ?></span>
@@ -288,6 +288,168 @@ $newClassFormHtml = getNewClassFormHtml();
         document.addEventListener('DOMContentLoaded', function () {
             showManageClass();
         });
+
+        function showClasses() {
+        var mainContent = document.getElementById('mainContent');
+        mainContent.innerHTML = `
+            <style>
+                h1 { margin-top: 20px; }
+                .smaller-table { font-size: 0.8em; width: 80%; margin: auto; }
+                .smaller-table th, .smaller-table td { padding: 5px; }
+                .add-class-btn { margin: 20px auto; display: flex; justify-content: center; }
+            </style>
+            <h1 style="text-align: center;">List of Classes</h1>
+            <div class="add-class-btn">
+                <button id="addClassBtn" class="btn btn-primary">Add Class</button>
+            </div>
+            <table id="classTable" class="table table-striped smaller-table" style="width:100%">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Subject Name</th>
+                        <th scope="col">Year Level</th>
+                        <th scope="col">Section</th>
+                        <th scope="col">Created By</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        `;
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'fetch_classes.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.send('created_by=' + <?php echo $_SESSION['user']['user_id']; ?>);
+
+        xhr.onload = function () {
+            if (this.status == 200) {
+                var classes = JSON.parse(this.responseText);
+                var tbody = document.querySelector('#classTable tbody');
+
+                for (var i = 0; i < classes.length; i++) {
+                    var tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <th scope="row">${i + 1}</th>
+                        <td>${classes[i].subject_name}</td>
+                        <td>${classes[i].year_level}</td>
+                        <td>${classes[i].section}</td>
+                        <td>${classes[i].created_by}</td>
+                        <td>
+                            <button class="btn btn-info view-btn" data-year_level="${classes[i].year_level}" data-section="${classes[i].section}">View</button>
+                            <button class="btn btn-danger delete-btn" data-id="${classes[i].subject_id}">Delete</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+
+                $('#classTable').DataTable();
+
+                document.querySelectorAll('.delete-btn').forEach(button => {
+                    button.addEventListener('click', function() {
+                        var subjectId = this.getAttribute('data-id');
+                        if (confirm('Are you sure you want to delete this class? These changes cannot be undone!')) {
+                            deleteClass(subjectId);
+                        }
+                    });
+                });
+
+                document.querySelectorAll('.view-btn').forEach(button => {
+                    button.addEventListener('click', function() {
+                        var yearLevel = this.getAttribute('data-year_level');
+                        var section = this.getAttribute('data-section');
+                        viewStudents(yearLevel, section);
+                    });
+                });
+            }
+        };
+
+        document.getElementById('addClassBtn').addEventListener('click', showNewClass);
+    }
+
+    function deleteClass(subjectId) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'delete_class.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.send('subject_id=' + subjectId);
+
+        xhr.onload = function () {
+            if (this.status == 200) {
+                var response = JSON.parse(this.responseText);
+                if (response.success) {
+                    alert('Class deleted successfully.');
+                    showClasses();
+                } else {
+                    alert('Failed to delete class.');
+                }
+            }
+        };
+    }
+
+    function viewStudents(yearLevel, section) {
+        var mainContent = document.getElementById('mainContent');
+        mainContent.innerHTML = `
+            <style>
+                h1 { margin-top: 20px; }
+                .smaller-table { font-size: 0.8em; width: 80%; margin: auto; }
+                .smaller-table th, .smaller-table td { padding: 5px; }
+            </style>
+            <h1 style="text-align: center;">List of Students</h1>
+            <table id="studentTable" class="table table-striped smaller-table" style="width:100%">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Full Name</th>
+                        <th scope="col">Age</th>
+                        <th scope="col">Gender</th>
+                        <th scope="col">Birthdate</th>
+                        <th scope="col">Address</th>
+                        <th scope="col">Year Level</th>
+                        <th scope="col">Section</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">LRN</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        `;
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'fetch_students.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.send('year_level=' + yearLevel + '&section=' + section);
+
+        xhr.onload = function () {
+            if (this.status == 200) {
+                var students = JSON.parse(this.responseText);
+                var tbody = document.querySelector('#studentTable tbody');
+
+                for (var i = 0; i < students.length; i++) {
+                    var tr = document.createElement('tr');
+                    var fullname = `${students[i].fname} ${students[i].mname} ${students[i].lname}`;
+                    tr.innerHTML = `
+                        <th scope="row">${i + 1}</th>
+                        <td>${fullname}</td>
+                        <td>${students[i].age}</td>
+                        <td>${students[i].gender}</td>
+                        <td>${students[i].birthdate}</td>
+                        <td>${students[i].address}</td>
+                        <td>${students[i].year_level}</td>
+                        <td>${students[i].section}</td>
+                        <td>${students[i].email}</td>
+                        <td>${students[i].lrn}</td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+
+                $('#studentTable').DataTable();
+            }
+        };
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        showManageClass();
+    });
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.0.8/datatables.min.js"></script>

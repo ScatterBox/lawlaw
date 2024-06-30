@@ -56,7 +56,7 @@ if ($_SESSION['role'] !== 'admin') {
             </ul>
             <div class="user-account">
                 <div class="user-profile">
-                    <img src="<?php echo $_SESSION['user']['img']; ?>" alt="Profile Image" />
+                <img src="<?php echo './images/' . $_SESSION['user']['img']; ?>" alt="Profile Image" />
                     <div class="user-detail">
                         <h3><?php echo $_SESSION['user']['nickname']; ?></h3>
                         <span><?php echo ucfirst($_SESSION['user']['role']); ?></span>
