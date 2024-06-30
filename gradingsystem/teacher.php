@@ -172,124 +172,129 @@ $newClassFormHtml = getNewClassFormHtml();
         }
 
         function showManageClass() {
-            var mainContent = document.getElementById('mainContent');
-            mainContent.innerHTML = `
-    <style>
-        h1 { margin-top: 20px; }
-        .smaller-table { font-size: 0.8em; width: 80%; margin: auto; }
-        .smaller-table th, .smaller-table td { padding: 5px; }
-        .add-class-btn { margin: 20px auto; display: flex; justify-content: center; }
-    </style>
-        <h1 style="text-align: center;">List of Students</h1>
-        <div class="add-class-btn">
-            <button id="addClassBtn" class="btn btn-primary">Add Class</button>
-        </div>
-        <table id="studentTable" class="table table-striped smaller-table" style="width:100%">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Full Name</th>
-                    <th scope="col">Age</th>
-                    <th scope="col">Gender</th>
-                    <th scope="col">Birthdate</th>
-                    <th scope="col">Address</th>
-                    <th scope="col">Year Level</th>
-                    <th scope="col">Section</th>
-                    <th scope="col">Subject</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">LRN</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    `;
+        var mainContent = document.getElementById('mainContent');
+        mainContent.innerHTML = `
+            <style>
+                h1 { margin-top: 20px; }
+                .smaller-table { font-size: 0.8em; width: 80%; margin: auto; }
+                .smaller-table th, .smaller-table td { padding: 5px; }
+                .add-class-btn { margin: 20px auto; display: flex; justify-content: center; }
+            </style>
+            <h1 style="text-align: center;">List of Students</h1>
+            <div class="add-class-btn">
+                <button id="addClassBtn" class="btn btn-primary">Add Class</button>
+            </div>
+            <table id="studentTable" class="table table-striped smaller-table" style="width:100%">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Full Name</th>
+                        <th scope="col">Age</th>
+                        <th scope="col">Gender</th>
+                        <th scope="col">Birthdate</th>
+                        <th scope="col">Address</th>
+                        <th scope="col">Year Level</th>
+                        <th scope="col">Section</th>
+                        <th scope="col">Subject</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">LRN</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        `;
 
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'fetch_dteach.php', true);
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.send();
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'fetch_dteach.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.send();
 
-            xhr.onload = function () {
-                if (this.status == 200) {
-                    var students = JSON.parse(this.responseText);
-                    var tbody = document.querySelector('#studentTable tbody');
+        xhr.onload = function () {
+            if (this.status == 200) {
+                var students = JSON.parse(this.responseText);
+                var tbody = document.querySelector('#studentTable tbody');
 
-                    for (var i = 0; i < students.length; i++) {
-                        var tr = document.createElement('tr');
-                        var fullname = `${students[i].fname} ${students[i].mname} ${students[i].lname}`;
-                        tr.innerHTML = `
-                    <th scope="row">${i + 1}</th>
-                    <td>${fullname}</td>
-                    <td>${students[i].age}</td>
-                    <td>${students[i].gender}</td>
-                    <td>${students[i].birthdate}</td>
-                    <td>${students[i].address}</td>
-                    <td>${students[i].year_level}</td>
-                    <td>${students[i].section}</td>
-                    <td>${students[i].subjects || 'No subjects'}</td>
-                    <td>${students[i].email}</td>
-                    <td>${students[i].lrn}</td>
-                `;
-                        tbody.appendChild(tr);
-                    }
-
-                    $('#studentTable').DataTable();
+                for (var i = 0; i < students.length; i++) {
+                    var tr = document.createElement('tr');
+                    var fullname = `${students[i].fname} ${students[i].mname} ${students[i].lname}`;
+                    tr.innerHTML = `
+                        <th scope="row">${i + 1}</th>
+                        <td>${fullname}</td>
+                        <td>${students[i].age}</td>
+                        <td>${students[i].gender}</td>
+                        <td>${students[i].birthdate}</td>
+                        <td>${students[i].address}</td>
+                        <td>${students[i].year_level}</td>
+                        <td>${students[i].section}</td>
+                        <td>${students[i].subjects || 'No subjects'}</td>
+                        <td>${students[i].email}</td>
+                        <td>${students[i].lrn}</td>
+                    `;
+                    tbody.appendChild(tr);
                 }
-            };
 
-            document.getElementById('addClassBtn').addEventListener('click', showNewClass);
-        }
-        function showNewClass() {
-            var mainContent = document.getElementById('mainContent');
-            mainContent.innerHTML = newClassFormHtml;
+                $('#studentTable').DataTable();
+            }
+        };
 
-            var form = document.getElementById('adminForm');
-            form.addEventListener('submit', function (event) {
-                event.preventDefault();
+        document.getElementById('addClassBtn').addEventListener('click', showNewClass);
+    }
 
-                var formData = new FormData(this);
+    function showNewClass() {
+        var mainContent = document.getElementById('mainContent');
+        mainContent.innerHTML = newClassFormHtml + `
+            <div class="col-md-8">
+                <div class="form-group mt-4">
+                    <button id="backBtn" class="btn btn-secondary">Back</button>
+                </div>
+            </div>
+        `;
 
-                fetch('subjectform.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            Swal.fire({
-                                title: 'Success!',
-                                text: data.message,
-                                icon: 'success',
-                                confirmButtonText: 'OK'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    showManageClass();
-                                }
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: data.message
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
+        var form = document.getElementById('adminForm');
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            var formData = new FormData(this);
+
+            fetch('subjectform.php', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: data.message,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                showManageClass();
+                            }
+                        });
+                    } else {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: 'An error occurred while processing your request.'
+                            text: data.message
                         });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An error occurred while processing your request.'
                     });
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            showManageClass();
+                });
         });
 
-        function showClasses() {
+        document.getElementById('backBtn').addEventListener('click', showManageClass);
+    }
+
+    function showClasses() {
         var mainContent = document.getElementById('mainContent');
         mainContent.innerHTML = `
             <style>
@@ -348,7 +353,7 @@ $newClassFormHtml = getNewClassFormHtml();
                 document.querySelectorAll('.delete-btn').forEach(button => {
                     button.addEventListener('click', function() {
                         var subjectId = this.getAttribute('data-id');
-                        if (confirm('Are you sure you want to delete this class? These changes cannot be undone!')) {
+                        if (confirm('Are you sure you want to delete this class?')) {
                             deleteClass(subjectId);
                         }
                     });
@@ -394,7 +399,8 @@ $newClassFormHtml = getNewClassFormHtml();
                 .smaller-table { font-size: 0.8em; width: 80%; margin: auto; }
                 .smaller-table th, .smaller-table td { padding: 5px; }
             </style>
-            <h1 style="text-align: center;">List of Students</h1>
+            <h1 style="text-align: center;">Students in ${yearLevel} - ${section}</h1>
+            <button id="backBtn" class="btn btn-secondary">Back</button>
             <table id="studentTable" class="table table-striped smaller-table" style="width:100%">
                 <thead>
                     <tr>
@@ -406,6 +412,7 @@ $newClassFormHtml = getNewClassFormHtml();
                         <th scope="col">Address</th>
                         <th scope="col">Year Level</th>
                         <th scope="col">Section</th>
+                        <th scope="col">Subject</th>
                         <th scope="col">Email</th>
                         <th scope="col">LRN</th>
                     </tr>
@@ -417,7 +424,7 @@ $newClassFormHtml = getNewClassFormHtml();
         var xhr = new XMLHttpRequest();
         xhr.open('POST', 'fetch_students.php', true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        xhr.send('year_level=' + yearLevel + '&section=' + section);
+        xhr.send(`year_level=${yearLevel}&section=${section}`);
 
         xhr.onload = function () {
             if (this.status == 200) {
@@ -436,6 +443,7 @@ $newClassFormHtml = getNewClassFormHtml();
                         <td>${students[i].address}</td>
                         <td>${students[i].year_level}</td>
                         <td>${students[i].section}</td>
+                        <td>${students[i].subjects || 'No subjects'}</td>
                         <td>${students[i].email}</td>
                         <td>${students[i].lrn}</td>
                     `;
@@ -445,11 +453,11 @@ $newClassFormHtml = getNewClassFormHtml();
                 $('#studentTable').DataTable();
             }
         };
+
+        document.getElementById('backBtn').addEventListener('click', showClasses);
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
-        showManageClass();
-    });
+    showManageClass();
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.0.8/datatables.min.js"></script>
