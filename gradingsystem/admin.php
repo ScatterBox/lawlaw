@@ -22,7 +22,7 @@ if ($_SESSION['role'] !== 'admin') {
     <div class="container-fluid">
         <aside class="sidebar">
             <div class="sidebar-header">
-                <img src="logo.jpg" alt="logo" />
+                <img src="images/logo.jpg" alt="logo" />
                 <div class="header-text">
                     <h2>Admin</h2>
                     <h2>Dashboard</h2>
@@ -581,8 +581,8 @@ if ($_SESSION['role'] !== 'admin') {
 
         //Teacher
         function showFaculty() {
-            var mainContent = document.getElementById('mainContent');
-            mainContent.innerHTML = `
+    var mainContent = document.getElementById('mainContent');
+    mainContent.innerHTML = `
     <style>
         h1 {
             margin-top: 20px;
@@ -606,6 +606,7 @@ if ($_SESSION['role'] !== 'admin') {
                 <th scope="col">Age</th>
                 <th scope="col">Address</th>
                 <th scope="col">Gender</th>
+                <th scope="col">Subjects</th>
             </tr>
         </thead>
         <tbody>
@@ -613,37 +614,39 @@ if ($_SESSION['role'] !== 'admin') {
     </table>
     `;
 
-            // Fetch the faculty data from the server using AJAX
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'fetch_teachers.php', true);
-            xhr.onload = function () {
-                if (this.status == 200) {
-                    // Parse the JSON data
-                    var teachers = JSON.parse(this.responseText);
+    // Fetch the faculty data from the server using AJAX
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', 'fetch_teachers.php', true);
+    xhr.onload = function () {
+        if (this.status == 200) {
+            // Parse the JSON data
+            var teachers = JSON.parse(this.responseText);
 
-                    // Get the table body
-                    var tbody = document.querySelector('#facultyTable tbody');
+            // Get the table body
+            var tbody = document.querySelector('#facultyTable tbody');
 
-                    // Insert the teacher data into the table
-                    for (var i = 0; i < teachers.length; i++) {
-                        var tr = document.createElement('tr');
-                        var fullname = `${teachers[i].fname} ${teachers[i].mname} ${teachers[i].lname} ${teachers[i].ename}`;
-                        tr.innerHTML = `
-            <th scope="row">${i + 1}</th>
-            <td>${fullname}</td>
-            <td>${teachers[i].age}</td>
-            <td>${teachers[i].address}</td>
-            <td>${teachers[i].gender}</td>
-        `;
-                        tbody.appendChild(tr);
-                    }
+            // Insert the teacher data into the table
+            for (var i = 0; i < teachers.length; i++) {
+                var tr = document.createElement('tr');
+                var fullname = `${teachers[i].fname} ${teachers[i].mname} ${teachers[i].lname} ${teachers[i].ename}`;
+                tr.innerHTML = `
+                    <th scope="row">${i + 1}</th>
+                    <td>${fullname}</td>
+                    <td>${teachers[i].age}</td>
+                    <td>${teachers[i].address}</td>
+                    <td>${teachers[i].gender}</td>
+                    <td>${teachers[i].subjects || 'No subjects'}</td>
+                `;
+                tbody.appendChild(tr);
+            }
 
-                    // Initialize DataTable
-                    $('#facultyTable').DataTable();
-                }
-            };
-            xhr.send();
+            // Initialize DataTable
+            $('#facultyTable').DataTable();
         }
+    };
+    xhr.send();
+}
+
 
         function showNewTeacher() {
             var mainContent = document.getElementById('mainContent');

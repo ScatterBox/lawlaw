@@ -1,11 +1,12 @@
 <?php
 include 'conn.php'; // Include your database connection file
 
-$sql = "SELECT user_id, fname, mname, lname, ename, 
-               age, 
-               address, 
-               gender
-        FROM teachers"; // Adjust your SQL query accordingly
+$sql = "SELECT t.user_id, t.fname, t.mname, t.lname, t.ename, t.age, t.gender, t.address, 
+               GROUP_CONCAT(s.subject_name SEPARATOR ', ') AS subjects 
+        FROM teachers t
+        LEFT JOIN subjects s ON t.user_id = s.created_by
+        GROUP BY t.user_id";
+
 $result = $conn->query($sql);
 
 $data = array();
