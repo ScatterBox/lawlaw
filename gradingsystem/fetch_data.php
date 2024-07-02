@@ -7,8 +7,8 @@ $sql = "SELECT s.user_id, s.fname, s.mname, s.lname, s.ename, s.age, s.gender, s
                s.year_level, s.section, s.email, s.lrn, 
                GROUP_CONCAT(sb.subject_name SEPARATOR ', ') AS subjects 
         FROM students s
-        INNER JOIN student_subjects ss ON s.user_id = ss.student_id
-        INNER JOIN subjects sb ON ss.subject_id = sb.subject_id AND sb.year_level = s.year_level AND sb.section = s.section
+        LEFT JOIN student_subjects ss ON s.user_id = ss.student_id
+        LEFT JOIN subjects sb ON ss.subject_id = sb.subject_id AND sb.year_level = s.year_level AND sb.section = s.section
         GROUP BY s.user_id";
 
 $result = $conn->query($sql);
